@@ -52,8 +52,8 @@ const HowItWorks = () => {
               transition={{ delay: i * 0.1 }}
               className="text-center relative"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-hero flex items-center justify-center mx-auto mb-5">
-                <step.icon className="h-6 w-6 text-primary-foreground" />
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                <step.icon className="h-6 w-6 text-primary" />
               </div>
               <div className="absolute top-7 left-[60%] right-0 h-px bg-border hidden md:block last:hidden" />
               <h3 className="font-display font-semibold text-lg mb-2">{step.title}</h3>

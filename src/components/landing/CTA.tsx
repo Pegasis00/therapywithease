@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 const CTA = () => {
   return (
     <section className="py-24 bg-gradient-hero relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(145_35%_45%_/_0.3),_transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(265_50%_70%_/_0.3),_transparent_70%)]" />
       <div className="container mx-auto px-4 relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -22,7 +22,7 @@ const CTA = () => {
           <Link to="/signup">
             <Button
               size="lg"
-              className="bg-card text-primary hover:bg-card/90 text-base px-8 py-6 shadow-lg"
+              className="bg-card text-primary hover:bg-card/90 text-base px-8 py-6 shadow-lg rounded-full"
             >
               Get Started Free <ArrowRight className="ml-1 h-5 w-5" />
             </Button>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Brain } from "lucide-react";
+import { Heart } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -8,9 +8,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-                <Brain className="h-4 w-4 text-primary-foreground" />
-              </div>
+              <Heart className="h-6 w-6 text-primary" strokeWidth={1.5} />
               <span className="font-display font-bold text-lg">TherapEASE</span>
             </Link>
             <p className="text-sm text-muted-foreground">

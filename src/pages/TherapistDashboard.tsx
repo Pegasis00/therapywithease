@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Brain, Users, CalendarDays, MessageSquare, FileText, Settings, LogOut, BarChart3, Clock, Bell } from "lucide-react";
+import { Heart, Users, CalendarDays, MessageSquare, FileText, Settings, LogOut, BarChart3, Clock, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
@@ -18,9 +18,7 @@ const TherapistDashboard = () => {
     <div className="min-h-screen bg-background flex">
       <aside className="hidden lg:flex w-64 flex-col bg-card border-r border-border p-4">
         <Link to="/" className="flex items-center gap-2 mb-8 px-2">
-          <div className="h-9 w-9 rounded-lg bg-gradient-hero flex items-center justify-center">
-            <Brain className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <Heart className="h-7 w-7 text-primary" strokeWidth={1.5} />
           <span className="font-display font-bold text-lg">TherapEASE</span>
         </Link>
         <div className="px-3 py-1.5 mb-4 rounded-lg bg-secondary text-xs font-medium text-secondary-foreground text-center">
@@ -49,7 +47,7 @@ const TherapistDashboard = () => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-2xl font-display font-bold mb-1">Emily R., LMFT 💚</h1>
+              <h1 className="text-2xl font-display font-bold mb-1">Emily R., LMFT 💜</h1>
               <p className="text-muted-foreground">Your therapy practice at a glance</p>
             </div>
             <div className="relative">
@@ -58,7 +56,6 @@ const TherapistDashboard = () => {
             </div>
           </div>
 
-          {/* Stats */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
               { label: "Assigned Patients", value: "18" },
@@ -73,7 +70,6 @@ const TherapistDashboard = () => {
             ))}
           </div>
 
-          {/* Today's Schedule */}
           <div className="bg-card rounded-2xl p-6 shadow-card border border-border mb-6">
             <h3 className="font-display font-semibold mb-4">Today's Schedule</h3>
             <div className="space-y-3">
@@ -104,9 +100,7 @@ const TherapistDashboard = () => {
             </div>
           </div>
 
-          {/* Two columns */}
           <div className="grid lg:grid-cols-2 gap-6">
-            {/* Support Groups */}
             <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
               <h3 className="font-display font-semibold mb-4">Your Support Groups</h3>
               <div className="space-y-3">
@@ -126,7 +120,6 @@ const TherapistDashboard = () => {
               </div>
             </div>
 
-            {/* Quick Actions */}
             <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
               <h3 className="font-display font-semibold mb-4">Quick Actions</h3>
               <div className="grid grid-cols-2 gap-3">

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Brain, ArrowLeft, User, Stethoscope, HeartHandshake } from "lucide-react";
+import { Heart, ArrowLeft, User, Stethoscope, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
 
 const roles = [
@@ -35,9 +35,7 @@ const Signup = () => {
       >
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="h-10 w-10 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Brain className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <Heart className="h-8 w-8 text-primary" strokeWidth={1.5} />
             <span className="font-display font-bold text-2xl">TherapEASE</span>
           </Link>
           <h1 className="text-2xl font-display font-bold mb-2">Create Your Account</h1>
@@ -86,7 +84,7 @@ const Signup = () => {
             <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1.5" required />
           </div>
 
-          <Button type="submit" variant="hero" className="w-full py-5" disabled={!role}>
+          <Button type="submit" variant="hero" className="w-full py-5 rounded-full" disabled={!role}>
             Create Account
           </Button>
 
