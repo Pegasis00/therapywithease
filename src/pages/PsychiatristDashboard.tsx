@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Brain, Users, ClipboardList, FileText, MessageSquare, AlertTriangle, Settings, LogOut, BarChart3, Stethoscope, Send } from "lucide-react";
+import { Heart, Users, ClipboardList, FileText, MessageSquare, AlertTriangle, Settings, LogOut, BarChart3, Stethoscope, Send } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
@@ -18,9 +18,7 @@ const PsychiatristDashboard = () => {
     <div className="min-h-screen bg-background flex">
       <aside className="hidden lg:flex w-64 flex-col bg-card border-r border-border p-4">
         <Link to="/" className="flex items-center gap-2 mb-8 px-2">
-          <div className="h-9 w-9 rounded-lg bg-gradient-hero flex items-center justify-center">
-            <Brain className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <Heart className="h-7 w-7 text-primary" strokeWidth={1.5} />
           <span className="font-display font-bold text-lg">TherapEASE</span>
         </Link>
         <div className="px-3 py-1.5 mb-4 rounded-lg bg-secondary text-xs font-medium text-secondary-foreground text-center">
@@ -52,7 +50,6 @@ const PsychiatristDashboard = () => {
             <p className="text-muted-foreground">Clinical overview and patient management</p>
           </div>
 
-          {/* Alert */}
           <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-6 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
@@ -62,7 +59,6 @@ const PsychiatristDashboard = () => {
             <Button variant="outline" size="sm" className="ml-auto flex-shrink-0">Review</Button>
           </div>
 
-          {/* Stats */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
               { label: "Active Patients", value: "24" },
@@ -77,7 +73,6 @@ const PsychiatristDashboard = () => {
             ))}
           </div>
 
-          {/* Patient List */}
           <div className="bg-card rounded-2xl p-6 shadow-card border border-border mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display font-semibold">Recent Patients</h3>
@@ -114,7 +109,6 @@ const PsychiatristDashboard = () => {
             </div>
           </div>
 
-          {/* Quick Actions */}
           <div className="grid sm:grid-cols-3 gap-4">
             {[
               { icon: ClipboardList, label: "Create Assessment", desc: "Build custom psychological tests" },

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Brain, ArrowLeft } from "lucide-react";
+import { Heart, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Login = () => {
@@ -14,7 +14,6 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo: redirect based on role selection
     if (role === "patient") navigate("/patient");
     else if (role === "psychiatrist") navigate("/psychiatrist");
     else if (role === "therapist") navigate("/therapist");
@@ -29,9 +28,7 @@ const Login = () => {
       >
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="h-10 w-10 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Brain className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <Heart className="h-8 w-8 text-primary" strokeWidth={1.5} />
             <span className="font-display font-bold text-2xl">TherapEASE</span>
           </Link>
           <h1 className="text-2xl font-display font-bold mb-2">Welcome Back</h1>
@@ -68,7 +65,7 @@ const Login = () => {
             </div>
           </div>
 
-          <Button type="submit" variant="hero" className="w-full py-5" disabled={!role}>
+          <Button type="submit" variant="hero" className="w-full py-5 rounded-full" disabled={!role}>
             Log In
           </Button>
 

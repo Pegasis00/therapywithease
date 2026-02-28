@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Brain, Heart, MessageSquare, BarChart3, ClipboardList, Users, CalendarDays, Settings, LogOut, Smile, Meh, Frown } from "lucide-react";
+import { Heart, MessageSquare, BarChart3, ClipboardList, Users, CalendarDays, Settings, LogOut, Smile, Meh, Frown } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
@@ -20,9 +20,7 @@ const PatientDashboard = () => {
       {/* Sidebar */}
       <aside className="hidden lg:flex w-64 flex-col bg-card border-r border-border p-4">
         <Link to="/" className="flex items-center gap-2 mb-8 px-2">
-          <div className="h-9 w-9 rounded-lg bg-gradient-hero flex items-center justify-center">
-            <Brain className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <Heart className="h-7 w-7 text-primary" strokeWidth={1.5} />
           <span className="font-display font-bold text-lg">TherapEASE</span>
         </Link>
         <nav className="flex-1 space-y-1">
@@ -52,8 +50,28 @@ const PatientDashboard = () => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-display font-bold mb-1">Good Morning, Sarah 👋</h1>
-            <p className="text-muted-foreground">Here's your mental health overview for today.</p>
+            <h1 className="text-2xl font-display font-bold mb-1">
+              Your Personal <span className="italic">Sanctuary</span>
+            </h1>
+            <p className="text-primary text-sm">Listening to your pulse, discovering your patterns.</p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+            <button className="bg-gradient-hero text-primary-foreground rounded-2xl p-6 text-left hover:opacity-90 transition-opacity">
+              <div className="flex items-center gap-2 mb-1">
+                <MessageSquare className="h-5 w-5" />
+                <span className="font-display font-semibold">Daily Check-in</span>
+              </div>
+              <p className="text-sm text-primary-foreground/80">Express how you feel today</p>
+            </button>
+            <button className="bg-card border border-border rounded-2xl p-6 text-left shadow-card hover:shadow-card-hover transition-shadow">
+              <div className="flex items-center gap-2 mb-1">
+                <ClipboardList className="h-5 w-5 text-primary" />
+                <span className="font-display font-semibold">Wellness Reports</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Deep-dive into your growth</p>
+            </button>
           </div>
 
           {/* Quick Mood */}
