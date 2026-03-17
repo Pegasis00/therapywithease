@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.vercel
+.env
+lint2.json
+lint_output.json

@@ -14,7 +14,7 @@ import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 import { useSyncUser } from "./hooks/useSyncUser";
 import { useProfile } from "./hooks/useProfile";
-import { SyncContext } from "./context/SyncContext";
+import { SyncContext, useSyncContext } from "./context/SyncContext";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 60 * 5, retry: 2 } },
@@ -29,12 +29,17 @@ const FullScreenSpinner = () => (
 
 // ─── RedirectHandler ─────────────────────────────────────────
 // Wraps public pages. Redirects to dashboard if already logged in.
+// Reads syncDone from SyncContext (set by useSyncUser in AppContent).
 const RedirectHandler = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading: isAuthLoading, logout } = useKindeAuth();
+  const { syncDone } = useSyncContext();
   const { data: profile, isLoading: isProfileLoading } = useProfile();
 
-  // Still resolving auth / profile
-  if (isAuthLoading || (isAuthenticated && isProfileLoading)) {
+  // Still resolving auth state
+  if (isAuthLoading) return <FullScreenSpinner />;
+
+  // Authenticated — wait for sync to finish, then for profile to load
+  if (isAuthenticated && (!syncDone || isProfileLoading)) {
     return <FullScreenSpinner />;
   }
 
@@ -49,8 +54,8 @@ const RedirectHandler = ({ children }: { children: React.ReactNode }) => {
     if (target) return <Navigate to={target} replace />;
   }
 
-  // Authenticated but no profile = INSERT failed (SQL not run yet)
-  if (isAuthenticated && !isProfileLoading && !profile) {
+  // Authenticated, sync done, profile still null → DB write failed
+  if (isAuthenticated && syncDone && !isProfileLoading && !profile) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background p-8">
         <div className="max-w-md text-center bg-card border border-destructive/30 rounded-2xl p-8 shadow-lg">
@@ -58,9 +63,15 @@ const RedirectHandler = ({ children }: { children: React.ReactNode }) => {
           <h2 className="text-xl font-display font-bold mb-2">Profile Setup Required</h2>
           <p className="text-muted-foreground text-sm mb-6">
             Your account authenticated successfully, but your profile couldn't be saved.
-            This may be due to a temporary database issue or an incomplete setup.
+            This may be due to a temporary database issue.
             <br /><br />
-            Please contact support if this persists, then sign in again.
+            Please{" "}
+            <button
+              onClick={() => logout({ redirectUrl: window.location.origin })}
+              className="text-primary hover:underline font-medium"
+            >
+              sign out and try again
+            </button>.
           </p>
           <button
             onClick={() => logout({ redirectUrl: window.location.origin })}
@@ -78,6 +89,7 @@ const RedirectHandler = ({ children }: { children: React.ReactNode }) => {
 
 // ─── ProtectedRoute ──────────────────────────────────────────
 // Ensures user is logged in AND has the expected role.
+// Reads syncDone from SyncContext (set by useSyncUser in AppContent).
 const ProtectedRoute = ({
   children,
   requiredRole,
@@ -86,12 +98,15 @@ const ProtectedRoute = ({
   requiredRole: "patient" | "psychiatrist" | "therapist";
 }) => {
   const { isAuthenticated, isLoading } = useKindeAuth();
+  const { syncDone } = useSyncContext();
   const { data: profile, isLoading: isProfileLoading } = useProfile();
 
-  if (isLoading || isProfileLoading) return <FullScreenSpinner />;
+  // Wait for auth, sync completion, and profile fetch
+  if (isLoading || !syncDone || isProfileLoading) return <FullScreenSpinner />;
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
 
+  // Profile exists but wrong role → redirect to correct dashboard
   if (profile && profile.role !== requiredRole) {
     const roleRoutes: Record<string, string> = {
       patient: "/patient",
@@ -101,12 +116,15 @@ const ProtectedRoute = ({
     return <Navigate to={roleRoutes[profile.role] || "/login"} replace />;
   }
 
+  // No profile at all → back to login
   if (!profile) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
 };
 
 // ─── AppContent ───────────────────────────────────────────────
+// useSyncUser is called ONCE here. Its state is shared via SyncContext.
+// RedirectHandler and ProtectedRoute read syncDone from the context.
 const AppContent = () => {
   const syncState = useSyncUser();
 

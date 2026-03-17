@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 const moodValues: Record<string, number> = {
@@ -7,7 +7,7 @@ const moodValues: Record<string, number> = {
     "Good": 4,
     "Okay": 3,
     "Low": 2,
-    "Not Good": 1
+    "Not Good": 1,
 };
 
 interface MoodData {
@@ -18,6 +18,7 @@ interface MoodData {
 
 export const MoodChart = () => {
     const [data, setData] = useState<MoodData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { user, getToken } = useKindeAuth();
 
     useEffect(() => {
@@ -31,54 +32,70 @@ export const MoodChart = () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (!res.ok) throw new Error("Fetch failed");
+                if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
                 const moods = await res.json();
 
-                const formatted = moods.map((m: any) => ({
-                    date: new Date(m.createdAt).toLocaleDateString(undefined, { weekday: 'short' }),
-                    value: moodValues[m.mood] || 2,
-                    label: m.mood
-                }));
+                const formatted: MoodData[] = moods.map((m: any) => {
+                    // Drizzle with neon-http returns camelCase field names
+                    const dateStr = m.createdAt || m.created_at;
+                    return {
+                        date: new Date(dateStr).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+                        value: moodValues[m.mood] ?? 3,
+                        label: m.mood,
+                    };
+                });
 
                 setData(formatted);
             } catch (error) {
                 console.error("Failed to load mood history:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchMoods();
     }, [user, getToken]);
 
+    if (isLoading) {
+        return (
+            <div className="h-[200px] flex items-center justify-center">
+                <div className="text-muted-foreground text-sm">Loading mood data…</div>
+            </div>
+        );
+    }
+
     if (data.length === 0) {
         return (
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm italic">
-                No mood data yet. Start tracking to see your patterns!
+            <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm italic">
+                No mood data yet — log your first mood above!
             </div>
         );
     }
 
     return (
-        <div className="h-[300px] w-full pt-4">
+        <div className="h-[200px] w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                     <XAxis
                         dataKey="date"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fontSize: 12, fill: '#64748B' }}
-                        dy={10}
+                        tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                        dy={8}
                     />
                     <YAxis
-                        domain={[0, 4]}
+                        domain={[0, 5]}
                         hide
                     />
+                    <ReferenceLine y={3} stroke="hsl(var(--border))" strokeDasharray="4 4" />
                     <Tooltip
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {
                                 return (
-                                    <div className="bg-card border border-border p-2 rounded-lg shadow-sm text-xs font-medium">
-                                        {payload[0].payload.label}
+                                    <div className="bg-card border border-border p-2 rounded-xl shadow-lg text-xs font-medium">
+                                        <div className="text-foreground">{payload[0].payload.label}</div>
+                                        <div className="text-muted-foreground">{payload[0].payload.date}</div>
                                     </div>
                                 );
                             }
@@ -89,8 +106,8 @@ export const MoodChart = () => {
                         type="monotone"
                         dataKey="value"
                         stroke="hsl(var(--primary))"
-                        strokeWidth={3}
-                        dot={{ r: 4, fill: "hsl(var(--primary))", strokeWidth: 2, stroke: "#fff" }}
+                        strokeWidth={2.5}
+                        dot={{ r: 4, fill: "hsl(var(--primary))", strokeWidth: 2, stroke: "hsl(var(--background))" }}
                         activeDot={{ r: 6, fill: "hsl(var(--primary))" }}
                     />
                 </LineChart>

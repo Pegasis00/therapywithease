@@ -14,6 +14,7 @@ export const useSyncUser = () => {
     useEffect(() => {
         if (isAuthLoading) return;
 
+        // Not authenticated — sync is "done" (nothing to sync)
         if (!isAuthenticated || !user?.id) {
             setSyncDone(true);
             return;
@@ -29,40 +30,42 @@ export const useSyncUser = () => {
             const email = user.email ?? '';
             const full_name = `${user.givenName ?? ''} ${user.familyName ?? ''}`.trim();
 
+            // Read the role that was saved BEFORE the Kinde redirect
             const storedRole = localStorage.getItem('user_role') as 'patient' | 'psychiatrist' | 'therapist' | null;
             const roleToUse = storedRole || 'patient';
-            
-            console.log('[useSyncUser] id:', id, '| storedRole:', storedRole);
+
+            console.log('[useSyncUser] id:', id, '| storedRole:', storedRole, '| roleToUse:', roleToUse);
 
             try {
-                // Get Kinde Token for Secure Backend Communication
+                // Get Kinde access token for secure backend communication
                 const token = await getToken();
-                
+
                 if (!token) {
-                    throw new Error("Failed to get authentication token");
+                    throw new Error('Failed to get authentication token');
                 }
 
                 const response = await fetch('/api/users/sync', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ email, full_name, role: roleToUse })
+                    body: JSON.stringify({ email, full_name, role: roleToUse }),
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(`Server error ${response.status}: ${JSON.stringify(errData)}`);
                 }
 
                 const data = await response.json();
-                
+
                 if (data.message === 'Profile created') {
-                     console.log('[useSyncUser] Profile created! role =', roleToUse);
+                    console.log('[useSyncUser] Profile created! role =', roleToUse);
                 } else if (data.profile) {
-                     console.log('[useSyncUser] Existing profile. role in DB =', data.profile.role);
-                     
-                     if (storedRole && storedRole !== data.profile.role) {
+                    console.log('[useSyncUser] Existing profile. role in DB =', data.profile.role);
+
+                    if (storedRole && storedRole !== data.profile.role) {
                         const roleLabels: Record<string, string> = {
                             patient: 'Patient',
                             psychiatrist: 'Psychiatrist',
@@ -72,10 +75,7 @@ export const useSyncUser = () => {
                             `⚠️ Your account is registered as a ${roleLabels[data.profile.role]}. Redirecting you to your ${roleLabels[data.profile.role]} dashboard.`,
                             { duration: 6000 }
                         );
-                        console.warn(
-                            `[useSyncUser] Role mismatch! Tried: ${storedRole}, DB has: ${data.profile.role}`
-                        );
-                     }
+                    }
                 }
 
                 // Clear stored role and refresh profile query
@@ -84,7 +84,7 @@ export const useSyncUser = () => {
 
             } catch (err) {
                 console.error('[useSyncUser] Unexpected error:', err);
-                toast.error('Could not sync your profile securely. Please contact support.', { duration: 8000 });
+                toast.error('Could not sync your profile. Please try signing out and back in.', { duration: 8000 });
                 localStorage.removeItem('user_role');
             } finally {
                 setIsSyncing(false);
@@ -94,7 +94,9 @@ export const useSyncUser = () => {
         };
 
         syncUser();
-    }, [isAuthenticated, isAuthLoading, user?.id, user?.email, user?.givenName, user?.familyName, queryClient, getToken]);
+    }, [isAuthenticated, isAuthLoading, user?.id, queryClient, getToken]);
+    // NOTE: we intentionally omit user.email/givenName/familyName from deps 
+    // to prevent re-running on profile updates — user.id is the stable identifier
 
     return { isSyncing, syncDone };
 };
