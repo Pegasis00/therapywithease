@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
-import { db } from '../src/db/index';
-import { profiles, moodCheckins, appointments, assessments, clinicalNotes } from '../src/db/schema';
+import { db } from '../src/db/index.js';
+import { profiles, moodCheckins, appointments, assessments, clinicalNotes } from '../src/db/schema.js';
 import { eq, desc, and, count, gte } from 'drizzle-orm';
 
 dotenv.config();
